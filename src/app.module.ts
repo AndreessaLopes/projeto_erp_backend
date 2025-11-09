@@ -12,9 +12,10 @@ import { CommomModule } from './common/common.module';
 import { CoreModule } from './core/core.module';
 import { ConfigModule } from './config/config.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { DatabaseModule } from './infrastructure/database/database.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, ProductsModule, SalesModule, StoresModule, ReportsModule, AnalyticsModule, CommomModule, CoreModule, ConfigModule, InfrastructureModule],
+  imports: [AuthModule, UsersModule, ProductsModule, SalesModule, StoresModule, ReportsModule, AnalyticsModule, CommomModule, CoreModule, ConfigModule, InfrastructureModule, DatabaseModule],
   controllers: [AppController],
   providers: [AppService],
 })
