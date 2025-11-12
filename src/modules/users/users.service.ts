@@ -28,4 +28,8 @@ export class UserService {
   remove(id: string) {
     return this.userRepository.deleteUser(id);
   }
+  
+  findByEmail(email: string) {
+    return this.userRepository.findByEmail(email);
+  }
 }
