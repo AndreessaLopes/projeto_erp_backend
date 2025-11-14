@@ -1,12 +1,9 @@
-import {
-  Entity,
-  Column,
-  BeforeInsert,
-} from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { BaseEntity } from '../../../infrastructure/database/base.entity';
+import { Entity, Column, BeforeInsert, ManyToOne, JoinColumn } from "typeorm";
+import * as bcrypt from "bcrypt";
+import { BaseEntity } from "../../../infrastructure/database/base.entity";
+import { Role } from "src/modules/roles/entities/role.entity";
 
-@Entity('users')
+@Entity("users")
 export class User extends BaseEntity {
   @Column()
   name: string;
@@ -16,6 +13,10 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @ManyToOne(() => Role, (role) => role.users)
+  @JoinColumn({ name: "role_id" })
+  role: Role;
 
   @BeforeInsert()
   async hashPassword() {

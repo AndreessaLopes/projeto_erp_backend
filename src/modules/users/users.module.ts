@@ -4,9 +4,11 @@ import { UserRepository } from './repository/user.repository';
 import { UsersController } from './users.controller';
 import { UserService } from './users.service';
 import { User } from './entities/user.entity';
+import { UserSeeder } from 'src/common/seeders/user.seeder';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), RolesModule],
   controllers: [UsersController],
   providers: [UserService, UserRepository],
   exports: [UserService, UserRepository],

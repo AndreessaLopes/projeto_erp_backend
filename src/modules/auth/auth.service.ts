@@ -11,15 +11,15 @@ export class AuthService {
   ) {}
 
   async register(data: any) {
-    const existing = await this.usersService.findByEmail(data.email);
-    if (existing) {
-      throw new UnauthorizedException('E-mail já cadastrado');
-    }
-
-    const user = await this.usersService.create(data);
-
-    return { message: 'Usuário registrado com sucesso', user };
+  const existing = await this.usersService.findByEmail(data.email);
+  if (existing) {
+    throw new UnauthorizedException('E-mail já cadastrado');
   }
+
+  const user = await this.usersService.create(data); // sem hash manual
+  return { message: 'Usuário registrado com sucesso', user };
+}
+
 
   async login(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
@@ -28,7 +28,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException('Senha incorreta');
 
-    const token = this.jwtService.sign({ sub: user.id, email: user.email });
+    const token = this.jwtService.sign({ sub: user.id, email: user.email, role: user.role.name });
     return { access_token: token };
   }
 
