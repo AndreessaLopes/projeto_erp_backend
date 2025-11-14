@@ -1,4 +1,4 @@
-import { Entity, Column, BeforeInsert, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, BeforeInsert, ManyToOne, JoinColumn, BeforeUpdate } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { BaseEntity } from "../../../infrastructure/database/base.entity";
 import { Role } from "src/modules/roles/entities/role.entity";
@@ -21,5 +21,12 @@ export class User extends BaseEntity {
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @BeforeUpdate()
+  async hashPasswordUpdate() {
+    if (this.password && !this.password.startsWith("$2b")) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 }

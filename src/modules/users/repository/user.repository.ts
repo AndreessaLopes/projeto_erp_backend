@@ -35,19 +35,23 @@ export class UserRepository {
   }
 
   async updateUser(id: string, updates: any): Promise<User> {
-    if (updates.roleId) {
-      updates.role = { id: updates.roleId };
-      delete updates.roleId;
-    }
+    const user = await this.repository.findOne({
+      where: { id },
+      relations: ["role"],
+    });
 
-    await this.repository.update(id, updates);
-
-    const user = await this.findById(id);
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return user;
+    if (updates.roleId) {
+      user.role = { id: updates.roleId } as any;
+      delete updates.roleId;
+    }
+
+    Object.assign(user, updates);
+
+    return this.repository.save(user);
   }
 
   async deleteUser(id: string): Promise<void> {
