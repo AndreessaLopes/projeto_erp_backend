@@ -17,6 +17,7 @@ import { RolesModule } from "./modules/roles/roles.module";
 import { RoleSeeder } from "./common/seeders/roles.seeder";
 import { UserSeeder } from "./common/seeders/user.seeder";
 import { SeedersModule } from "./common/seeders/seeders.module";
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { SeedersModule } from "./common/seeders/seeders.module";
     ConfigModule,
     InfrastructureModule,
     DatabaseModule,
-    SeedersModule, // 👈 agora sim, em um contexto ÚNICO
+    SeedersModule,
+    CategoryModule, // 👈 agora sim, em um contexto ÚNICO
   ],
 
   controllers: [AppController],
