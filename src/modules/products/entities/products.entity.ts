@@ -25,7 +25,4 @@ export class Product extends BaseEntity {
   })
   @JoinColumn({ name: "category_id" })
   category: Category;
-
-  @Column({ default: true })
-  active: boolean;
 }

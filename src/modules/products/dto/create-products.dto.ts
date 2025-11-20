@@ -19,5 +19,6 @@ export class CreateProductDto {
   stock: number;
 
   @IsUUID()
-  categoryId: string;
+  @IsOptional()
+  categoryId?: string;
 }

@@ -13,6 +13,4 @@ export class Category extends BaseEntity {
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
-  @Column({ default: true})
-  active: boolean
 }

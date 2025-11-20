@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto } from "../dto/create-user.dto";
+import { UpdateUserDto } from "../dto/update-user.dto";
 
 @Injectable()
 export class UserRepository {
@@ -10,12 +12,12 @@ export class UserRepository {
     private readonly repository: Repository<User>
   ) {}
 
-  async createUser(userData: any): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<User> {
     const user = this.repository.create({
-      name: userData.name,
-      email: userData.email,
-      password: userData.password,
-      role: { id: userData.roleId },
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      role: { id: data.roleId },
     });
 
     return this.repository.save(user);
@@ -34,34 +36,45 @@ export class UserRepository {
     });
   }
 
-  async updateUser(id: string, updates: any): Promise<User> {
-    const user = await this.repository.findOne({
-      where: { id },
-      relations: ["role"],
-    });
+  async updateUser(id: string, data: Partial<UpdateUserDto>): Promise<User> {
+    const user = await this.repository
+  .createQueryBuilder("user")
+  .addSelect("user.password")
+  .leftJoinAndSelect("user.role", "role")
+  .where("user.id = :id", { id })
+  .getOne();
+
 
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    if (updates.roleId) {
-      user.role = { id: updates.roleId } as any;
-      delete updates.roleId;
+    // Se mudar o roleId — atualiza o relacionamento
+    if (data.roleId) {
+      user.role = { id: data.roleId } as any;
+      delete data.roleId;
     }
 
-    Object.assign(user, updates);
+    // Atualiza os demais campos
+    Object.assign(user, data);
 
     return this.repository.save(user);
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.repository.delete(id);
+    // Soft delete padrão com active + deletedAt
+    await this.repository.update(id, {
+      active: false,
+      deletedAt: new Date(),
+    });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.repository.findOne({
-      where: { email },
-      relations: ["role"],
-    });
-  }
+  return this.repository
+    .createQueryBuilder("user")
+    .addSelect("user.password")
+    .leftJoinAndSelect("user.role", "role")
+    .where("user.email = :email", { email })
+    .getOne();
+}
 }

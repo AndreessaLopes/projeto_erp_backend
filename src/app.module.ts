@@ -1,23 +1,21 @@
-import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { AuthModule } from "./modules/auth/auth.module";
-import { UsersModule } from "./modules/users/users.module";
-import { ProductsModule } from "./modules/products/products.module";
-import { SalesModule } from "./modules/sales/sales.module";
-import { StoresModule } from "./modules/stores/stores.module";
-import { ReportsModule } from "./modules/reports/reports.module";
-import { AnalyticsModule } from "./modules/analytics/analytics.module";
-import { CommomModule } from "./common/common.module";
-import { CoreModule } from "./core/core.module";
-import { ConfigModule } from "./config/config.module";
-import { InfrastructureModule } from "./infrastructure/infrastructure.module";
-import { DatabaseModule } from "./infrastructure/database/database.module";
-import { RolesModule } from "./modules/roles/roles.module";
-import { RoleSeeder } from "./common/seeders/roles.seeder";
-import { UserSeeder } from "./common/seeders/user.seeder";
-import { SeedersModule } from "./common/seeders/seeders.module";
+import { Module } from '@nestjs/common';
+import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/category/category.module';
+import { UsersModule } from './modules/users/users.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { CommomModule } from './common/common.module';
+import { SeedersModule } from './common/seeders/seeders.module';
+import { ConfigModule } from './config/config.module';
+import { CoreModule } from './core/core.module';
+import { DatabaseModule } from './infrastructure/database/database.module';
+import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { ProductsModule } from './modules/products/products.module';
+import { ReportsModule } from './modules/reports/reports.module';
+import { RolesModule } from './modules/roles/roles.module';
+import { SalesModule } from './modules/sales/sales.module';
+import { StoresModule } from './modules/stores/stores.module';
 
 @Module({
   imports: [
@@ -35,9 +33,8 @@ import { CategoryModule } from './modules/category/category.module';
     InfrastructureModule,
     DatabaseModule,
     SeedersModule,
-    CategoryModule, // 👈 agora sim, em um contexto ÚNICO
+    CategoryModule, 
   ],
-
   controllers: [AppController],
   providers: [AppService],
 })

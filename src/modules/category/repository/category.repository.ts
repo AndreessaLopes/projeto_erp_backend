@@ -10,24 +10,32 @@ export class CategoryRepository {
     private readonly repository: Repository<Category>
   ) {}
 
-  async createCategory(productCategory: Partial<Category>): Promise<Category> {
-    const category = this.repository.create(productCategory);
+  async createCategory(data: Partial<Category>): Promise<Category> {
+    const category = this.repository.create(data);
     return this.repository.save(category);
   }
 
   async findAll(): Promise<Category[]> {
-    return this.repository.find();
+    return this.repository.find({
+      where: { active: true },
+    });
   }
 
   async findByName(name: string): Promise<Category | null> {
-    return this.repository.findOne({ where: { name } });
+    return this.repository.findOne({
+      where: { name, active: true },
+    });
   }
 
   async findById(id: string): Promise<Category> {
-    const category = await this.repository.findOne({ where: { id } });
+    const category = await this.repository.findOne({
+      where: { id, active: true },
+    });
+
     if (!category) {
       throw new NotFoundException(`Category with id ${id} not found`);
     }
+
     return category;
   }
 
@@ -37,9 +45,12 @@ export class CategoryRepository {
     return this.repository.save(category);
   }
 
-  async deleteCategory(id: string): Promise<Category> {
+  async deleteCategory(id: string): Promise<void> {
     const category = await this.findById(id);
-    category.active = false;
-    return this.repository.save(category);
+
+    await this.repository.update(id, {
+      active: false,
+      deletedAt: new Date(),
+    });
   }
 }

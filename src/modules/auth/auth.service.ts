@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
@@ -13,16 +17,18 @@ export class AuthService {
   async register(data: any) {
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) {
-      throw new UnauthorizedException("E-mail já cadastrado");
+      throw new ConflictException("E-mail já cadastrado");
     }
 
-    const user = await this.usersService.create(data); // sem hash manual
+    const user = await this.usersService.create(data);
     return { message: "Usuário registrado com sucesso", user };
   }
 
   async login(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
+
     if (!user) throw new UnauthorizedException("Usuário não encontrado");
+    if (!user.active) throw new UnauthorizedException("Usuário desativado");
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException("Senha incorreta");
@@ -30,8 +36,10 @@ export class AuthService {
     const token = this.jwtService.sign({
       sub: user.id,
       email: user.email,
-      role: user.role.name,
+      role: user.role?.name,
+      roleId: user.role?.id,
     });
+
     return { access_token: token };
   }
 
@@ -41,21 +49,16 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      return {
-        message:
-          "Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.",
-      };
+
+    if (user) {
+      const resetToken = this.jwtService.sign(
+        { sub: user.id },
+        { expiresIn: "1h" }
+      );
+
+      const resetLink = `http://localhost:5137/auth/reset-password?token=${resetToken}`;
+      console.log(`Reset link for ${email}: ${resetLink}`);
     }
-
-    const resetToken = this.jwtService.sign(
-      { sub: user.id },
-      { expiresIn: "1h" }
-    );
-
-    const resetLinkl = `http://localhost:5137/auth/reset-password?token=${resetToken}`;
-
-    console.log(`Link de redefinição de senha para ${email}: ${resetLinkl}`);
 
     return {
       message:
@@ -66,7 +69,7 @@ export class AuthService {
   async validateResetToken(token: string) {
     try {
       return this.jwtService.verify(token);
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException("Token inválido ou expirado");
     }
   }
@@ -75,11 +78,9 @@ export class AuthService {
     const payload = await this.validateResetToken(token);
 
     const user = await this.usersService.findOne(payload.sub);
-    if (!user) {
-      throw new UnauthorizedException("Usuário não encontrado");
+    if (!user || !user.active) {
+      throw new UnauthorizedException("Usuário inválido ou desativado");
     }
-
-    user.password = newPassword;
 
     await this.usersService.update(user.id, { password: newPassword });
 

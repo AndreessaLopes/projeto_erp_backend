@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Role } from "../entities/role.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CreateRoleDto } from "../dto/create-role.dto";
 
 @Injectable()
 export class RoleRepository {
@@ -10,28 +11,45 @@ export class RoleRepository {
     private readonly repository: Repository<Role>
   ) {}
 
-  async createRole(userRole: Partial<Role>): Promise<Role> {
-    const role = this.repository.create(userRole);
+  async createRole(dto: CreateRoleDto): Promise<Role> {
+    const role = this.repository.create(dto);
     return this.repository.save(role);
   }
 
   async findAll(): Promise<Role[]> {
-    return this.repository.find();
+    return this.repository.find({
+      where: { active: true },
+    });
   }
 
   async findByName(name: string): Promise<Role | null> {
-    return this.repository.findOne({ where: { name } });
+    return this.repository.findOne({
+      where: { name, active: true },
+    });
   }
 
   async findById(id: string): Promise<Role> {
-    const role = await this.repository.findOne({ where: { id } });
+    const role = await this.repository.findOne({
+      where: { id, active: true },
+    });
+
     if (!role) {
-      throw new NotFoundException(`Role whit id ${id} not found`);
+      throw new NotFoundException(`Role with id ${id} not found`);
     }
+
     return role;
   }
 
   async deleteRole(id: string): Promise<void> {
-    await this.repository.delete(id);
+    const exists = await this.repository.findOne({ where: { id } });
+
+    if (!exists) {
+      throw new NotFoundException(`Role with id ${id} not found`);
+    }
+
+    await this.repository.update(id, {
+      active: false,
+      deletedAt: new Date(),
+    });
   }
 }
