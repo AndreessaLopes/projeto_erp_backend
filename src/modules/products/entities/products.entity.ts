@@ -16,9 +16,6 @@ export class Product extends BaseEntity {
   @Column("decimal", { precision: 10, scale: 2 })
   price: number;
 
-  @Column("int", { default: 0 })
-  stock: number;
-
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: "SET NULL",
     eager: true,

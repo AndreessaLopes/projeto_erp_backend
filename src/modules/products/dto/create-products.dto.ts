@@ -15,9 +15,6 @@ export class CreateProductDto {
   @IsNumber()
   price: number;
 
-  @IsNumber()
-  stock: number;
-
   @IsUUID()
   @IsOptional()
   categoryId?: string;

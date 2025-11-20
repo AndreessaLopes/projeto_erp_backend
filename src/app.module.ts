@@ -16,6 +16,10 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { StoresModule } from './modules/stores/stores.module';
+import { InventoryService } from './modules/inventory/inventory.service';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { CustomersController } from './modules/customers/customers.controller';
+import { CustomersModule } from './modules/customers/customers.module';
 
 @Module({
   imports: [
@@ -33,9 +37,11 @@ import { StoresModule } from './modules/stores/stores.module';
     InfrastructureModule,
     DatabaseModule,
     SeedersModule,
-    CategoryModule, 
+    CategoryModule,
+    InventoryModule,
+    CustomersModule, 
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, CustomersController],
+  providers: [AppService, InventoryService],
 })
 export class AppModule {}

@@ -17,7 +17,6 @@ export class ProductsRepository {
       sku: dto.sku,
       description: dto.description,
       price: dto.price,
-      stock: dto.stock,
       category: dto.categoryId ? { id: dto.categoryId } as any : null,
     });
 
