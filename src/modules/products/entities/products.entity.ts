@@ -1,6 +1,7 @@
 import { BaseEntity } from "src/infrastructure/database/base.entity";
 import { Category } from "src/modules/category/entities/category.entity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Inventory } from "src/modules/inventory/entities/inventory.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 
 @Entity("products")
 export class Product extends BaseEntity {
@@ -22,4 +23,7 @@ export class Product extends BaseEntity {
   })
   @JoinColumn({ name: "category_id" })
   category: Category;
+
+  @OneToMany(() => Inventory, (inventory) => inventory.product)
+  inventory: Inventory[];
 }
