@@ -2,6 +2,7 @@ import { BaseEntity } from "src/infrastructure/database/base.entity";
 import { Product } from "src/modules/products/entities/products.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { MovementType } from "../dto/createMovement.dto";
+import { Store } from "src/modules/stores/entities/stores.entity";
 
 @Entity('movements')
 export class Movement extends BaseEntity {
@@ -9,9 +10,9 @@ export class Movement extends BaseEntity {
   @JoinColumn({ name: "product_id" })
   product: Product;
 
-//   @ManyToOne(() => Store, { eager: true })
-//   @JoinColumn({ name: "store_id" })
-//   store: Store;
+  @ManyToOne(() => Store, { eager: true })
+  @JoinColumn({ name: "store_id" })
+  store: Store;
 
   @Column({
     type: "enum",
