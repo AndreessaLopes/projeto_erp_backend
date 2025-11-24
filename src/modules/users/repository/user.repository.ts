@@ -77,4 +77,13 @@ export class UserRepository {
     .where("user.email = :email", { email })
     .getOne();
 }
+
+async validateExistsOrFail(id: string) {
+  const entity = await this.findById(id);
+  if (!entity) {
+    throw new NotFoundException(`Registro não encontrado: ${id}`);
+  }
+  return entity;
+}
+
 }

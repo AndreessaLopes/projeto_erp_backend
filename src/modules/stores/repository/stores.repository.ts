@@ -35,4 +35,13 @@ export class StoresRepository {
   async deleteStore(id: string) {
     await this.repo.update(id, { active: false, deletedAt: new Date() });
   }
+
+  async validateExistsOrFail(id: string) {
+  const entity = await this.findById(id);
+  if (!entity) {
+    throw new NotFoundException(`Registro não encontrado: ${id}`);
+  }
+  return entity;
+}
+
 }
