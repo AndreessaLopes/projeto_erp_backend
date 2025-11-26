@@ -3,8 +3,8 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -12,7 +12,7 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.get<string[]>(
-      'roles',
+      "roles",
       context.getHandler(),
     );
 
@@ -21,8 +21,10 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user || !user.role || !requiredRoles.includes(user.role.name)) {
-      throw new ForbiddenException('Você não tem permissão para acessar esta rota');
+    if (!user || !user.role || !requiredRoles.includes(user.role)) {
+      throw new ForbiddenException(
+        "Você não tem permissão para acessar esta rota",
+      );
     }
 
     return true;
