@@ -17,35 +17,22 @@ export class RoleRepository {
   }
 
   async findAll(): Promise<Role[]> {
-    return this.repository.find({
-      where: { active: true },
-    });
+    return this.repository.find({ where: { active: true } });
   }
 
   async findByName(name: string): Promise<Role | null> {
-    return this.repository.findOne({
-      where: { name, active: true },
-    });
+    return this.repository.findOne({ where: { name, active: true } });
   }
 
   async findById(id: string): Promise<Role> {
-    const role = await this.repository.findOne({
-      where: { id, active: true },
-    });
-
-    if (!role) {
-      throw new NotFoundException(`Role with id ${id} not found`);
-    }
-
+    const role = await this.repository.findOne({ where: { id, active: true } });
+    if (!role) throw new NotFoundException(`Role with id ${id} not found`);
     return role;
   }
 
   async deleteRole(id: string): Promise<void> {
     const exists = await this.repository.findOne({ where: { id } });
-
-    if (!exists) {
-      throw new NotFoundException(`Role with id ${id} not found`);
-    }
+    if (!exists) throw new NotFoundException(`Role with id ${id} not found`);
 
     await this.repository.update(id, {
       active: false,

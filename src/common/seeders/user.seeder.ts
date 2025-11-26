@@ -19,13 +19,11 @@ export class UserSeeder implements OnModuleInit {
     const adminRole = await this.roleRepository.findOne({
       where: { name: "admin" },
     });
-
     if (!adminRole) return;
 
     const adminExists = await this.userRepository.findOne({
       where: { email: "admin@system.com" },
     });
-
     if (adminExists) return;
 
     const passwordPlain = "admin123";

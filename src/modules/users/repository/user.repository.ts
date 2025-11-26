@@ -24,45 +24,33 @@ export class UserRepository {
   }
 
   async findAll(): Promise<User[]> {
-    return this.repository.find({
-      relations: ["role"],
-    });
+    return this.repository.find({ relations: ["role"] });
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.repository.findOne({
-      where: { id },
-      relations: ["role"],
-    });
+    return this.repository.findOne({ where: { id }, relations: ["role"] });
   }
 
   async updateUser(id: string, data: Partial<UpdateUserDto>): Promise<User> {
     const user = await this.repository
-  .createQueryBuilder("user")
-  .addSelect("user.password")
-  .leftJoinAndSelect("user.role", "role")
-  .where("user.id = :id", { id })
-  .getOne();
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .leftJoinAndSelect("user.role", "role")
+      .where("user.id = :id", { id })
+      .getOne();
 
+    if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
-
-    // Se mudar o roleId — atualiza o relacionamento
     if (data.roleId) {
       user.role = { id: data.roleId } as any;
       delete data.roleId;
     }
 
-    // Atualiza os demais campos
     Object.assign(user, data);
-
     return this.repository.save(user);
   }
 
   async deleteUser(id: string): Promise<void> {
-    // Soft delete padrão com active + deletedAt
     await this.repository.update(id, {
       active: false,
       deletedAt: new Date(),
@@ -70,11 +58,17 @@ export class UserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-  return this.repository
-    .createQueryBuilder("user")
-    .addSelect("user.password")
-    .leftJoinAndSelect("user.role", "role")
-    .where("user.email = :email", { email })
-    .getOne();
-}
+    return this.repository
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .leftJoinAndSelect("user.role", "role")
+      .where("user.email = :email", { email })
+      .getOne();
+  }
+
+  async validateExistsOrFail(id: string) {
+    const entity = await this.findById(id);
+    if (!entity) throw new NotFoundException(`Registro não encontrado: ${id}`);
+    return entity;
+  }
 }

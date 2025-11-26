@@ -1,4 +1,11 @@
-import { Entity, Column, BeforeInsert, ManyToOne, JoinColumn, BeforeUpdate } from "typeorm";
+import {
+  Entity,
+  Column,
+  BeforeInsert,
+  ManyToOne,
+  JoinColumn,
+  BeforeUpdate,
+} from "typeorm";
 import * as bcrypt from "bcrypt";
 import { BaseEntity } from "../../../infrastructure/database/base.entity";
 import { Role } from "src/modules/roles/entities/role.entity";
@@ -11,7 +18,7 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false})
+  @Column({ select: false })
   password: string;
 
   @ManyToOne(() => Role, (role) => role.users)
