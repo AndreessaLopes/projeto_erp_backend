@@ -40,6 +40,7 @@ import { CustomersModule } from './modules/customers/customers.module';
     CategoryModule,
     InventoryModule,
     CustomersModule, 
+    ReportsModule,
   ],
   controllers: [AppController, CustomersController],
   providers: [AppService, InventoryService],
