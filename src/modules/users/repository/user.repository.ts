@@ -58,6 +58,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
+<<<<<<< HEAD
     return this.repository
       .createQueryBuilder("user")
       .addSelect("user.password")
@@ -71,4 +72,22 @@ export class UserRepository {
     if (!entity) throw new NotFoundException(`Registro não encontrado: ${id}`);
     return entity;
   }
+=======
+  return this.repository
+    .createQueryBuilder("user")
+    .addSelect("user.password")
+    .leftJoinAndSelect("user.role", "role")
+    .where("user.email = :email", { email })
+    .getOne();
+}
+
+async validateExistsOrFail(id: string) {
+  const entity = await this.findById(id);
+  if (!entity) {
+    throw new NotFoundException(`Registro não encontrado: ${id}`);
+  }
+  return entity;
+}
+
+>>>>>>> feature/sales
 }
