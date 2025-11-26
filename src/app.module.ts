@@ -29,8 +29,6 @@ import { CustomersModule } from './modules/customers/customers.module';
     ProductsModule,
     SalesModule,
     StoresModule,
-    ReportsModule,
-    AnalyticsModule,
     CommomModule,
     CoreModule,
     ConfigModule,
@@ -41,6 +39,7 @@ import { CustomersModule } from './modules/customers/customers.module';
     InventoryModule,
     CustomersModule, 
     ReportsModule,
+    AnalyticsModule
   ],
   controllers: [AppController, CustomersController],
   providers: [AppService, InventoryService],
